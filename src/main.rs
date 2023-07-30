@@ -7,6 +7,7 @@ use axum::{
     Router, response::Response, middleware,
 };
 use helper::routes::{routes_hello, routes_static};
+use tower_cookies::CookieManagerLayer;
 use self::error::{Error, Result};
 
 #[tokio::main]
@@ -16,6 +17,7 @@ async fn main() {
         .merge(routes_hello())
         .merge(web::routes_login::routes())
         .layer(middleware::map_response(main_response_mapper))
+        .layer(CookieManagerLayer::new())
         .fallback_service(routes_static());
     // run it with hyper on localhost:3000
     axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
